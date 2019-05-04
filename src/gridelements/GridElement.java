@@ -6,7 +6,7 @@ public class GridElement {
         this.shape = PipeShape.FILL;
         for (int i=0;i<3;i++) {
             for (int j=0;j<3;j++) {
-                characterComposition[i][j] = "\u001B[" + 30 + ";" + 40 + "m" + '\u2589' + ' ';
+                characterComposition[i][j] = "\u001B[" + 37 + ";" + 47 + "m" + '\u2589' + ' ';
             }
         }
     }

@@ -2,9 +2,17 @@ import gridelements.GridElement;
 import gridelements.PipeElement;
 import gridelements.PipeShape;
 
+import java.util.LinkedList;
+import java.util.Random;
+import java.util.Set;
+
 public class Grid {
     GridElement[][] createGrid() {
         GridElement[][] grid = new GridElement[9][9];
+        PipeShape[] pipeShapes = {PipeShape.UPRIGHT,PipeShape.UPLEFT,PipeShape.DOWNRIGHT,PipeShape.DOWNLEFT,
+                                    PipeShape.HORIZONTAL,PipeShape.VERTICAL};
+        Random randomObject = new Random();
+
         for (int i=0;i<9;i++) {
             for (int j=0;j<9;j++) {
                 if (i==0 || i==8 || j==0 || j==8) grid[i][j] = new GridElement();
@@ -15,7 +23,7 @@ public class Grid {
                 else if (i==7 && j==7) grid[i][j] = new PipeElement(PipeShape.DOWNRIGHT);
                 else if (j==1 || j==7) grid[i][j] = new PipeElement(PipeShape.VERTICAL);
                 else if (i==7) grid[i][j] = new PipeElement(PipeShape.HORIZONTAL);
-                else grid[i][j] = new GridElement();
+                else grid[i][j] = new PipeElement(pipeShapes[randomObject.nextInt(pipeShapes.length)]);
 
             }
         }
@@ -48,4 +56,5 @@ public class Grid {
         }
         return printableGrid;
     }
+
 }
