@@ -7,5 +7,7 @@ public enum PipeShape {
     DOWNRIGHT,
     HORIZONTAL,
     VERTICAL,
-    FILL
+    FILL,
+    START,
+    END
 }

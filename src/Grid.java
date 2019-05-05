@@ -16,8 +16,8 @@ public class Grid {
         for (int i=0;i<9;i++) {
             for (int j=0;j<9;j++) {
                 if (i==0 || i==8 || j==0 || j==8) grid[i][j] = new GridElement();
-                else if      (i==1 && j==1) grid[i][j] = new PipeElement(PipeShape.UPRIGHT);
-                else if (i==1 && j==7) grid[i][j] = new PipeElement(PipeShape.UPLEFT);
+                else if      (i==1 && j==1) grid[i][j] = new PipeElement(PipeShape.UPLEFT);
+                else if (i==1 && j==7) grid[i][j] = new PipeElement(PipeShape.UPRIGHT);
                 else if (i==1) grid[i][j] = new PipeElement(PipeShape.HORIZONTAL);
                 else if (i==7 && j==1) grid[i][j] = new PipeElement(PipeShape.DOWNLEFT);
                 else if (i==7 && j==7) grid[i][j] = new PipeElement(PipeShape.DOWNRIGHT);
@@ -27,6 +27,9 @@ public class Grid {
 
             }
         }
+        grid[1][randomObject.nextInt(5)+2] = new PipeElement(PipeShape.START);
+        grid[7][randomObject.nextInt(5)+2] = new PipeElement(PipeShape.END);
+
         return grid;
     }
     void printGrid(GridElement[][] grid) {
