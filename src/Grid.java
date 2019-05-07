@@ -2,11 +2,13 @@ import gridelements.GridElement;
 import gridelements.PipeElement;
 import gridelements.PipeShape;
 
+import java.nio.channels.Pipe;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Set;
 
 public class Grid {
+    PipeElement startingElement;
     GridElement[][] createGrid() {
         GridElement[][] grid = new GridElement[9][9];
         PipeShape[] pipeShapes = {PipeShape.UPRIGHT,PipeShape.UPLEFT,PipeShape.DOWNRIGHT,PipeShape.DOWNLEFT,
@@ -31,6 +33,14 @@ public class Grid {
         grid[7][randomObject.nextInt(5)+2] = new PipeElement(PipeShape.END);
 
         return grid;
+    }
+    public int[] getStartingElementCoordinates(GridElement[][] grid) {
+        for (int j=1;j<grid.length-1;j++) {
+            if (grid[1][j].shape == PipeShape.START) {
+                return new int[]{1,j};
+            }
+        }
+        return null;
     }
     void printGrid(GridElement[][] grid) {
         String[][] printableGrid = convertGridToPrintable(grid);
@@ -58,6 +68,36 @@ public class Grid {
             }
         }
         return printableGrid;
+    }
+    public void rotatePipeElement(GridElement[][] grid, int[] coordinates) {
+        PipeElement pipeElement;
+        if (grid[coordinates[0]][coordinates[1]] instanceof PipeElement) {
+            pipeElement = (PipeElement) grid[coordinates[0]][coordinates[1]];
+            grid[coordinates[0]][coordinates[1]] = pipeElement.rotateElement();
+        }
+    }
+
+    public void connectionChecking(PipeElement pipeElement) {
+        switch (pipeElement.shape) {
+            case UPRIGHT:
+            case UPLEFT:
+            case DOWNRIGHT:
+            case DOWNLEFT:
+            case HORIZONTAL:
+            case VERTICAL:
+            case START:
+        }
+    }
+    public void waterInPipe(GridElement[][] grid, int[] coordinates) {
+
+        int[] startingCoordinates = getStartingElementCoordinates(grid);
+        PipeElement nextElement;
+        PipeElement currentElement = (PipeElement) grid[startingCoordinates[0]][startingCoordinates[1]];
+        boolean elementIsConnected = true;
+
+        do {
+            //TODO check possible connections
+        } while (elementIsConnected);
     }
 
 }

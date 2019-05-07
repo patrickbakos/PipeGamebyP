@@ -2,15 +2,20 @@ package gridelements;
 
 
 import java.awt.*;
+import java.nio.channels.Pipe;
 import java.util.HashMap;
 
 public class PipeElementBuilder {
 
+    final static int BLACK_FG = 30;
+    final static int BLACK_BG = 40;
+    final static int WHITE_FG = 37;
+    final static int WHITE_BG = 47;
+    final static int BLUE_FG = 34;
+    final static int BLUE_BG = 44;
+
     public static String[][] buildPipeElement(PipeShape shape) {
-        final int BLACK_FG = 30;
-        final int BLACK_BG = 40;
-        final int WHITE_FG = 37;
-        final int WHITE_BG = 47;
+
         String[][] pipeElement = new String[3][3];
 
         for (int i=0;i<3;i++) {
@@ -42,7 +47,7 @@ public class PipeElementBuilder {
                         } else pipeElement[i][j] = "\u001B[" + WHITE_BG + ";" + WHITE_FG + "m" + '\u2589' + ' ';
                         break;
                     case START: if (i==1 || (i==2 && j==1)) {
-                        pipeElement[i][j] = "\u001B[" + BLACK_BG + ";" + BLACK_FG + "m" + '\u2589' + ' ';
+                        pipeElement[i][j] = "\u001B[" + BLUE_BG + ";" + BLUE_FG + "m" + '\u2589' + ' ';
                     } else pipeElement[i][j] = "\u001B[" + WHITE_BG + ";" + WHITE_FG + "m" + '\u2589' + ' ';
                         break;
                     case END: if (i==1 || (i==0 && j==1)) {
@@ -77,5 +82,16 @@ public class PipeElementBuilder {
                 break;
         }
         return activeConnections;
+    }
+    public static PipeShape nextElementShape(PipeShape shape) {
+     switch (shape) {
+         case UPRIGHT: return PipeShape.DOWNRIGHT;
+         case UPLEFT: return PipeShape.UPRIGHT;
+         case DOWNRIGHT: return PipeShape.DOWNLEFT;
+         case DOWNLEFT: return PipeShape.UPLEFT;
+         case HORIZONTAL: return PipeShape.VERTICAL;
+         case VERTICAL: return PipeShape.HORIZONTAL;
+         default: return null;
+     }
     }
 }
