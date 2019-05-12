@@ -1,11 +1,9 @@
+import gridelements.Direction;
 import gridelements.GridElement;
 import gridelements.PipeElement;
 import gridelements.PipeShape;
 
-import java.nio.channels.Pipe;
-import java.util.LinkedList;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class Grid {
     PipeElement startingElement;
@@ -14,30 +12,37 @@ public class Grid {
         PipeShape[] pipeShapes = {PipeShape.UPRIGHT,PipeShape.UPLEFT,PipeShape.DOWNRIGHT,PipeShape.DOWNLEFT,
                                     PipeShape.HORIZONTAL,PipeShape.VERTICAL};
         Random randomObject = new Random();
-
+        int[] coordinates;
         for (int i=0;i<9;i++) {
             for (int j=0;j<9;j++) {
+                coordinates = new int[]{i,j};
                 if (i==0 || i==8 || j==0 || j==8) grid[i][j] = new GridElement();
-                else if      (i==1 && j==1) grid[i][j] = new PipeElement(PipeShape.UPLEFT);
-                else if (i==1 && j==7) grid[i][j] = new PipeElement(PipeShape.UPRIGHT);
-                else if (i==1) grid[i][j] = new PipeElement(PipeShape.HORIZONTAL);
-                else if (i==7 && j==1) grid[i][j] = new PipeElement(PipeShape.DOWNLEFT);
-                else if (i==7 && j==7) grid[i][j] = new PipeElement(PipeShape.DOWNRIGHT);
-                else if (j==1 || j==7) grid[i][j] = new PipeElement(PipeShape.VERTICAL);
-                else if (i==7) grid[i][j] = new PipeElement(PipeShape.HORIZONTAL);
-                else grid[i][j] = new PipeElement(pipeShapes[randomObject.nextInt(pipeShapes.length)]);
+                else if      (i==1 && j==1) grid[i][j] = new PipeElement(PipeShape.UPLEFT, coordinates);
+                else if (i==1 && j==7) grid[i][j] = new PipeElement(PipeShape.UPRIGHT, coordinates);
+                else if (i==1) grid[i][j] = new PipeElement(PipeShape.HORIZONTAL, coordinates);
+                else if (i==7 && j==1) grid[i][j] = new PipeElement(PipeShape.DOWNLEFT, coordinates);
+                else if (i==7 && j==7) grid[i][j] = new PipeElement(PipeShape.DOWNRIGHT, coordinates);
+                else if (j==1 || j==7) grid[i][j] = new PipeElement(PipeShape.VERTICAL, coordinates);
+                else if (i==7) grid[i][j] = new PipeElement(PipeShape.HORIZONTAL, coordinates);
+                else grid[i][j] = new PipeElement(pipeShapes[randomObject.nextInt(pipeShapes.length)], coordinates);
 
             }
         }
-        grid[1][randomObject.nextInt(5)+2] = new PipeElement(PipeShape.START);
-        grid[7][randomObject.nextInt(5)+2] = new PipeElement(PipeShape.END);
+        int startJ  = randomObject.nextInt(5)+2;
+        int endJ = randomObject.nextInt(5)+2;
+        startingElement = new PipeElement(PipeShape.START, new int[]{1,startJ});
+        grid[1][startJ] = startingElement;
+        grid[7][endJ] = new PipeElement(PipeShape.END, new int[]{7,endJ});
 
         return grid;
     }
     public int[] getStartingElementCoordinates(GridElement[][] grid) {
-        for (int j=1;j<grid.length-1;j++) {
-            if (grid[1][j].shape == PipeShape.START) {
-                return new int[]{1,j};
+        for (int i=0;i<grid.length;i++){
+            for (int j=0;j<grid.length;j++) {
+                if (grid[i][j].shape == PipeShape.START) {
+                    System.out.println("starticn"+i+ j);
+                    return new int[]{i,j};
+                }
             }
         }
         return null;
@@ -77,27 +82,45 @@ public class Grid {
         }
     }
 
-    public void connectionChecking(PipeElement pipeElement) {
-        switch (pipeElement.shape) {
-            case UPRIGHT:
-            case UPLEFT:
-            case DOWNRIGHT:
-            case DOWNLEFT:
-            case HORIZONTAL:
-            case VERTICAL:
-            case START:
+    public void waterFlowCheck(GridElement[][] grid, int[] coordinates) {
+        PipeElement currentElement;
+        if (grid[coordinates[0]][coordinates[1]] instanceof PipeElement) {
+            currentElement = (PipeElement) grid[coordinates[0]][coordinates[1]];
         }
-    }
-    public void waterInPipe(GridElement[][] grid, int[] coordinates) {
-
-        int[] startingCoordinates = getStartingElementCoordinates(grid);
-        PipeElement nextElement;
-        PipeElement currentElement = (PipeElement) grid[startingCoordinates[0]][startingCoordinates[1]];
-        boolean elementIsConnected = true;
-
-        do {
-            //TODO check possible connections
-        } while (elementIsConnected);
+        else {currentElement = null;}
+        if (currentElement.isConnected) {
+            GridElement nextElement;
+            switch (currentElement.flowDirection) {
+                case DOWN:
+                    nextElement = grid[coordinates[0]-1][coordinates[1]];
+                    break;
+                case LEFT:
+                    nextElement = grid[coordinates[0]][coordinates[1]-1];
+                    break;
+                case RIGHT:
+                    nextElement = grid[coordinates[0]][coordinates[1]+1];
+                    break;
+                case UP:
+                    nextElement = grid[coordinates[0]+1][coordinates[1]];
+                    break;
+                default:
+                    nextElement = grid[coordinates[0]][coordinates[1]];
+            }
+            if (nextElement instanceof PipeElement && nextElement != currentElement) {
+                PipeElement nextValidElement = (PipeElement) nextElement;
+                if (nextValidElement.activeDirections.containsValue(currentElement.flowDirection)) {
+                    nextValidElement.isConnected = true;
+                    Collection<Direction> activeConnections = nextValidElement.activeDirections.values();
+                    for (Iterator<Direction> myIterator = activeConnections.iterator();myIterator.hasNext();) {
+                        if (myIterator.next() != currentElement.flowDirection) {
+                            nextValidElement.flowDirection = myIterator.next();
+                        }
+                    }
+                    waterFlowCheck(grid, ((PipeElement) nextElement).coordinates);
+                }
+                else System.out.println("nono");
+            }
+        }
     }
 
 }

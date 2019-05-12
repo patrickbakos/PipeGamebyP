@@ -80,6 +80,9 @@ public class PipeElementBuilder {
             case HORIZONTAL:
                 activeConnections.put(Direction.RIGHT, Direction.LEFT); activeConnections.put(Direction.LEFT, Direction.RIGHT);
                 break;
+            case START:
+                activeConnections.put(Direction.DOWN, Direction.UP);
+                break;
         }
         return activeConnections;
     }
@@ -93,5 +96,21 @@ public class PipeElementBuilder {
          case VERTICAL: return PipeShape.HORIZONTAL;
          default: return null;
      }
+    }
+    public static boolean startSetupConnection(PipeShape shape) {
+        switch (shape) {
+            case START:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static Direction setUpStartingFlow(PipeShape shape) {
+        switch (shape) {
+            case START:
+                return Direction.DOWN;
+            default:
+                return null;
+        }
     }
 }
