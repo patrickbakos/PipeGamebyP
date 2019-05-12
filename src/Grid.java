@@ -109,7 +109,7 @@ public class Grid {
             if (nextElement instanceof PipeElement && nextElement != currentElement) {
                 PipeElement nextValidElement = (PipeElement) nextElement;
                 if (nextValidElement.activeDirections.containsValue(currentElement.flowDirection)) {
-                    nextValidElement.isConnected = true;
+                    nextValidElement.isConnected = true;//TODO colour connected next element
                     Collection<Direction> activeConnections = nextValidElement.activeDirections.values();
                     for (Iterator<Direction> myIterator = activeConnections.iterator();myIterator.hasNext();) {
                         if (myIterator.next() != currentElement.flowDirection) {
